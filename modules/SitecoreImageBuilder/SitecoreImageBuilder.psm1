@@ -3,10 +3,10 @@ function Invoke-Build
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(        
         [Parameter(Mandatory = $true)]
-        [ValidateScript( {Test-Path $_ -PathType 'Container'})] 
+        [ValidateScript( { Test-Path $_ -PathType 'Container' })] 
         [string]$Path,
         [Parameter(Mandatory = $true)]
-        [ValidateScript( {Test-Path $_ -PathType 'Container'})] 
+        [ValidateScript( { Test-Path $_ -PathType 'Container' })] 
         [string]$InstallSourcePath,
         [Parameter(Mandatory = $true)]
         [string]$Registry,
@@ -27,10 +27,17 @@ function Invoke-Build
     # Specify priority for each tag, used to ensure base images are build first. This is the most simple approach I could come up with for handling dependencies between images. If needed in the future, look into something like https://en.wikipedia.org/wiki/Topological_sorting.
     $defaultPriority = 1000
     $priorities = New-Object System.Collections.Specialized.OrderedDictionary
-    $priorities.Add("^sitecore-base:(.*)$", 100)
-    $priorities.Add("^sitecore-xp-base:(.*)$", 110)
-    $priorities.Add("^sitecore-xp-xconnect:(.*)$", 120)
-    $priorities.Add("^sitecore-openjdk:(.*)$", 130)
+    $priorities.Add("^mssql-developer:(.*)$", 100)
+    $priorities.Add("^sitecore-openjdk:(.*)$", 110)
+    $priorities.Add("^sitecore-base:(.*)$", 120)
+    $priorities.Add("^sitecore-xm1-sqldev:(.*)$", 130)
+    $priorities.Add("^sitecore-xm1-pse-(.*)-sqldev:(.*)$", 140)
+    $priorities.Add("^sitecore-xm1-pse-(.*)-cm:(.*)$", 150);
+    $priorities.Add("^sitecore-xp-sqldev:(.*)$", 160)
+    $priorities.Add("^sitecore-xp-base:(.*)$", 170)
+    $priorities.Add("^sitecore-xp-xconnect:(.*)$", 180)    
+    $priorities.Add("^sitecore-xp-pse-(.*)-sqldev:(.*)$", 190)
+    $priorities.Add("^sitecore-xp-pse-(.*)-standalone:(.*)$", 200);
     $priorities.Add("^(.*)$", $defaultPriority)
     
     # Find out what to build
@@ -64,8 +71,8 @@ function Invoke-Build
 
     # Reorder specs, priorities goes first
     $specs = [System.Collections.ArrayList]@()
-    $specs.AddRange(($unsortedSpecs | Where-Object { $_.Priority -lt $defaultPriority } | Sort-Object -Property Priority))
-    $specs.AddRange(($unsortedSpecs | Where-Object { $_.Priority -eq $defaultPriority }))
+    $specs.AddRange(@($unsortedSpecs | Where-Object { $_.Priority -lt $defaultPriority } | Sort-Object -Property Priority))
+    $specs.AddRange(@($unsortedSpecs | Where-Object { $_.Priority -eq $defaultPriority }))
 
     # Print results
     $specs | Select-Object -Property Tag, Include, Priority, Base | Format-Table
@@ -87,7 +94,7 @@ function Invoke-Build
         $specs | Where-Object { $_.Include -eq $true } | ForEach-Object {
             $spec = $_
 
-            $spec.Base | Where-Object { $_.StartsWith("sitecore") -eq $false } | ForEach-Object {
+            $spec.Base | Where-Object { $_.Contains("/") -eq $true } | ForEach-Object {
                 $baseImages += $_
             }
         }
@@ -145,7 +152,7 @@ function Invoke-Build
         }
         else
         {
-            docker image build --isolation "hyperv" --tag $tag $spec.Path
+            docker image build --isolation "hyperv" --tag $tag $spec.Path 
         }
 
         $LASTEXITCODE -ne 0 | Where-Object { $_ } | ForEach-Object { throw "Failed." }
@@ -189,31 +196,29 @@ function Find-BuildSpecifications
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [ValidateScript( {Test-Path $_ -PathType 'Container'})] 
+        [ValidateScript( { Test-Path $_ -PathType 'Container' })] 
         [string]$Path
     )
 
     Get-ChildItem -Path $Path -Filter "build.json" -Recurse | ForEach-Object {
         $data = Get-Content -Path $_.FullName | ConvertFrom-Json
-        $baseImages = @()
-
+        $dockerFile = Get-Item -Path (Join-Path $_.Directory.FullName "\Dockerfile")
+        
         # Find base images
-        Get-ChildItem -Path $_.Directory.FullName -Filter "Dockerfile" | ForEach-Object {
-            Get-Content -Path $_.FullName | Where-Object { $_.StartsWith("FROM ") } | ForEach-Object { Write-Output $_.Replace("FROM ", "").Trim() } | ForEach-Object {
-                $image = $_
+        $baseImages = $dockerFile | Get-Content | Where-Object { $_.StartsWith("FROM ") } | ForEach-Object { Write-Output $_.Replace("FROM ", "").Trim() } | ForEach-Object {
+            $image = $_
 
-                if ($image -like "* as *")
-                {
-                    $image = $image.Substring(0, $image.IndexOf(" as "))
-                }
-
-                if ([string]::IsNullOrEmpty($image))
-                {
-                    throw ("Invalid Dockerfile '{0}', no FROM image was found?" -f $_.FullName)
-                }
-
-                $baseImages += $image
+            if ($image -like "* as *")
+            {
+                $image = $image.Substring(0, $image.IndexOf(" as "))
             }
+
+            if ([string]::IsNullOrEmpty($image))
+            {
+                throw ("Invalid Dockerfile '{0}', no FROM image was found?" -f $_.FullName)
+            }
+
+            Write-Output $image
         }
 
         if ([string]::IsNullOrEmpty($data.tag))
@@ -229,12 +234,13 @@ function Find-BuildSpecifications
         }
 
         Write-Output (New-Object PSObject -Property @{
-                Tag      = $data.tag;
-                Base     = $baseImages;
-                Path     = $_.Directory.FullName;
-                Sources  = $sources;
-                Priority = $null;
-                Include  = $null;
+                Tag            = $data.tag;
+                Base           = $baseImages;
+                Path           = $_.Directory.FullName;
+                DockerFilePath = $dockerFile.FullName;
+                Sources        = $sources;
+                Priority       = $null;
+                Include        = $null;
             })
     }
 }
@@ -244,7 +250,7 @@ function Get-CurrentImages
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [ValidateScript( {Test-Path $_ -PathType 'Container'})] 
+        [ValidateScript( { Test-Path $_ -PathType 'Container' })] 
         [string]$Path
     )
     
@@ -262,12 +268,12 @@ function Get-CurrentImages
             $build = $match.Groups["build"].Value
 
             Write-Output (New-Object PSObject -Property @{
-                    Repository = $repository;
-                    Version    = $version;
-                    OS         = $os;
-                    Build      = $build;
-                    Tag        = $spec.Tag;
-                    Path       = "images{0}/Dockerfile" -f $spec.Path.Replace((Get-Item -Path $Path).FullName, "").Replace("\", "/").Replace(" ", "%20");
+                    Repository     = $repository;
+                    Version        = $version;
+                    OS             = $os;
+                    Build          = $build;
+                    Tag            = $spec.Tag;
+                    DockerFilePath = $spec.DockerFilePath;
                 })
         }
     }
@@ -278,7 +284,7 @@ function Get-CurrentImagesMarkdown
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [ValidateScript( {Test-Path $_ -PathType 'Container'})] 
+        [ValidateScript( { Test-Path $_ -PathType 'Container' })] 
         [string]$Path
     )
     
@@ -286,6 +292,8 @@ function Get-CurrentImagesMarkdown
     Write-Output "| ------- | ---------- | --- | -----------| --- |"
 
     Get-CurrentImages -Path $Path | Sort-Object -Property Version, Build, Repository -Descending | ForEach-Object {
-        Write-Output ("| {0} | {1} | {2} | {3 } | ``{4}`` [Dockerfile]({5}) |" -f $_.Version, $_.Repository, $_.OS, $_.Build, $_.Tag, $_.Path )
+        $dockerFileUrl = (Resolve-Path $_.DockerFilePath -Relative).Replace(".\", "").Replace("\", "/").Replace(" ", "%20")
+
+        Write-Output ("| {0} | {1} | {2} | {3 } | ``{4}`` [Dockerfile]({5}) |" -f $_.Version, $_.Repository, $_.OS, $_.Build, $_.Tag, $dockerFileUrl)
     }
 }
