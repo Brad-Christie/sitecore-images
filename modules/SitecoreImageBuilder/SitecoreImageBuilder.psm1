@@ -103,7 +103,7 @@ function Invoke-Build
         If ($spec.Include -and -not $Spec.Skip) {
             
             $spec.Sources | ForEach-Object {
-                $sources += $InstallSourceResolver.Invoke($_)
+                $sources += $InstallSourceResolver.Invoke($_, $spec.Tag)
             }
         }
         

@@ -1,5 +1,5 @@
 # escape=`
-FROM sitecore-base:9.0.180604-windowsservercore-1709 as builder
+FROM sitecore-base:9.0.2-windowsservercore-1709 as builder
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
