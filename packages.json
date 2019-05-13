@@ -72,6 +72,84 @@
     "filename": "Sitecore 9.0.0 rev. 171002 (WDP XM1 packages).zip",
     "url": "https://dev.sitecore.net/~/media/617694E165634C1E92BD30D894C24AA9.ashx"
   },
+  // Sitecore Experience Platform 8.2 Update-7
+  "sitecore-8.2.7-xp0": {
+    "filename": "Sitecore 8.2 rev. 180406 (WDP XP0 package).zip",
+    "url": "https://dev.sitecore.net/~/media/2E45DB019AF64A47A568362CC22D8D2B.ashx"
+  },
+  "sitecore-8.2.7-xp1": {
+    "filename": "Sitecore 8.2 rev. 180406 (WDP XP1 packages).zip",
+    "url": "https://dev.sitecore.net/~/media/6FF281B11D0741A7A917974F510A2C97.ashx"
+  },
+  "sitecore-8.2.7-xm1": {
+    "filename": "Sitecore 8.2 rev. 180406 (WDP XM1 packages).zip",
+    "url": "https://dev.sitecore.net/~/media/EB88CA1EBDD645CA822FD067BEB74E4F.ashx"
+  },
+  // Sitecore Experience Platform 8.2 Update-6
+  "sitecore-8.2.6-xp0": {
+    "filename": "Sitecore 8.2 rev. 171121 (WDP XP0 package).zip",
+    "url": "https://dev.sitecore.net/~/media/AFA4C05BA4414C239FA9945E52ABF7DC.ashx"
+  },
+  "sitecore-8.2.6-xp1": {
+    "filename": "Sitecore 8.2 rev. 171121 (WDP XP1 packages).zip",
+    "url": "https://dev.sitecore.net/~/media/3EEEBBFE59604DDDAC7550C71C657C7C.ashx"
+  },
+  "sitecore-8.2.6-xm1": {
+    "filename": "Sitecore 8.2 rev. 171121 (WDP XDB1 packages).zip",
+    "url": "https://dev.sitecore.net/~/media/1BDCE8EC35CC4D7C849C42EB6A0837DC.ashx"
+  },
+  // Sitecore Experience Platform 8.2 Update-5
+  "sitecore-8.2.5-xp0": {
+    "filename": "Sitecore 8.2 rev. 170728 (WDP XP0 package).zip",
+    "url": "https://dev.sitecore.net/~/media/25C7D9F67F3241E280DB4F26E796327E.ashx"
+  },
+  "sitecore-8.2.5-xp1": {
+    "filename": "Sitecore 8.2 rev. 170728 (WDP XP1 packages).zip",
+    "url": "https://dev.sitecore.net/~/media/5678C095502B4088A647E3EEB0CEC093.ashx"
+  },
+  "sitecore-8.2.5-xm1": {
+    "filename": "Sitecore 8.2 rev. 170728 (WDP XM1 packages).zip",
+    "url": "https://dev.sitecore.net/~/media/9D24D8DA320D4D71BBA6E068EE2DCAF1.ashx"
+  },
+  // Sitecore Experience Platform 8.2 Update-4
+  "sitecore-8.2.4-xp0": {
+    "filename": "Sitecore 8.2 rev. 170614 (WDP XP0 package).zip",
+    "url": "https://dev.sitecore.net/~/media/721A02741EE44E7E871D4D30B7AF221B.ashx"
+  },
+  "sitecore-8.2.4-xp1": {
+    "filename": "Sitecore 8.2 rev. 170614 (WDP XP1 packages).zip",
+    "url": "https://dev.sitecore.net/~/media/F15343CC35E1423A941C2E3892505F31.ashx"
+  },
+  "sitecore-8.2.4-xm1": {
+    "filename": "Sitecore 8.2 rev. 170614 (WDP XM1 packages).zip",
+    "url": "https://dev.sitecore.net/~/media/897D9DD9AE594C788017209C1C9E7BD8.ashx"
+  },
+  // Sitecore Experience Platform 8.2 Update-3
+  "sitecore-8.2.3-xp0": {
+    "filename": "Sitecore 8.2 rev. 170407 (WDP XP0 package).zip",
+    "url": "https://dev.sitecore.net/~/media/62659A7E36174890B2C29AF3D9486714.ashx"
+  },
+  "sitecore-8.2.3-xp1": {
+    "filename": "Sitecore 8.2 rev. 170407 (WDP XP1 packages).zip",
+    "url": "https://dev.sitecore.net/~/media/1D2E11B939A74B4D82AC79096609A589.ashx"
+  },
+  "sitecore-8.2.3-xm1": {
+    "filename": "Sitecore 8.2 rev. 170407 (WDP XM1 packages).zip",
+    "url": "https://dev.sitecore.net/~/media/9822E0F8587B486E8A6D38E09446CF8B.ashx"
+  },
+  // Sitecore Experience Platform 8.2 Update-2
+  "sitecore-8.2.2-xp0": {
+    "filename": "Sitecore 8.2 rev. 161221 (WDP XP0 package).zip",
+    "url": "https://dev.sitecore.net/~/media/44002B4A6D4C497F8306475AFFA48CBE.ashx"
+  },
+  "sitecore-8.2.2-xp1": {
+    "filename": "Sitecore 8.2 rev. 161221 (WDP XP1 packages).zip",
+    "url": "https://dev.sitecore.net/~/media/0C41068B44874FC6A53C4E9DC1C9C233.ashx"
+  },
+  "sitecore-8.2.2-xm1": {
+    "filename": "Sitecore 8.2 rev. 161221 (WDP XM1 packages).zip",
+    "url": "https://dev.sitecore.net/~/media/2315E3C4402F49248108E467819D001A.ashx"
+  },
   
   // ##########################################################################
   // Sitecore Experience Accelerator
